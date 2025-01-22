@@ -1,13 +1,17 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/System/Vector2.hpp>
 
 int main()
 {
     auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "CMake SFML Project");
     window.setFramerateLimit(144);
-    sf::RectangleShape rectangle(sf::Vector2f(128.0f, 128.0f));
-    rectangle.setFillColor(sf::Color::Green);
-    rectangle.setOrigin(sf::Vector2f(rectangle.getSize().x / 2, rectangle.getSize().y / 2));
-    rectangle.setPosition(sf::Vector2f(100.0f, 100.0f));
+    sf::Texture mushroomTexture;
+    mushroomTexture.loadFromFile("Mushroom.png");
+    sf::Sprite mushroom(mushroomTexture);
+    sf::Vector2u size = mushroomTexture.getSize();
+    mushroom.setOrigin(sf::Vector2f(size.x / 2, size.y / 2));
+    sf::Vector2f increment(0.4f, 0.4f);
 
     while (window.isOpen())
     {
@@ -19,8 +23,19 @@ int main()
             }
         }
 
+        if((mushroom.getPosition().x + (size.x / 2) > window.getSize().x && increment.x > 0) || (mushroom.getPosition().x - (size.x / 2) < 0 && increment.x < 0)){
+            //Reverse direction on the X axis
+            increment.x = -increment.x;
+        }
+        if((mushroom.getPosition().y + (size.y / 2) > window.getSize().y && increment.y > 0) || (mushroom.getPosition().y - (size.y / 2) < 0 && increment.y < 0)){
+            //Reverse the direction on the Y axis
+            increment.y = -increment.y;
+        }
+
+        mushroom.setPosition(mushroom.getPosition() + increment);
+
         window.clear();
-        window.draw(rectangle);
+        window.draw(mushroom);
         window.display();
     }
 }
